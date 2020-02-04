@@ -19,7 +19,7 @@ public class SignUpServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         UserProfile userProfile = new UserProfile(req.getParameter("login"),req.getParameter("password"),"default@mail.ru");
-        if(!accountService.hasLogin(userProfile)){
+        if(!accountService.hasProfileByLogin(userProfile)){
             accountService.addNewUser(userProfile);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("Signed up");

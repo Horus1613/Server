@@ -44,3 +44,4 @@ target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputF
 .idea/workspace.xml
 .idea/workspace.xml
 target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
+target/classes/META-INF/Server.kotlin_module
