@@ -6,6 +6,7 @@ import org.hibernate.Transaction;
 import dbUtils.HibernateSessionFactory;
 
 public class HibernateUserDAO implements UserDAO {
+    @Override
     public void save(User user) {
         try (Session session = HibernateSessionFactory.getSessionFactory().openSession()){
             Transaction transaction = session.beginTransaction();
@@ -16,6 +17,7 @@ public class HibernateUserDAO implements UserDAO {
         }
     }
 
+    @Override
     public User findByLogin(String login) {
         return HibernateSessionFactory.getSessionFactory().openSession().get(User.class,login);
     }
