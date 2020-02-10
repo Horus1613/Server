@@ -9,15 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SignUpServlet extends HttpServlet {
-    private final UserDAO userDAO = new UserDAO();
+    private final UserDAO userDao;
+
+    public SignUpServlet(UserDAO userDao) {
+        this.userDao = userDao;
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         User user = new User();
         user.setLogin(req.getParameter("login"));
         user.setPassword(req.getParameter("password"));
-        if(userDAO.findByLogin(req.getParameter("login"))==null){
-            userDAO.save(user);
+        if(userDao.findByLogin(req.getParameter("login"))==null){
+            userDao.save(user);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("Signed up");
         } else{

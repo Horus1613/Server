@@ -1,5 +1,7 @@
 package main;
 
+import dao.UserDAO;
+import dao.JdbcUserDAO;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -10,10 +12,12 @@ import servlets.signs.SignUpServlet;
 public class Main {
     public static void main(String[] args) throws Exception {
 
+        UserDAO userDao = new JdbcUserDAO();
+
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new MirrorServlet()),"/mirror");
-        context.addServlet(new ServletHolder(new SignUpServlet()),"/signup");
-        context.addServlet(new ServletHolder(new SignInServlet()),"/signin");
+        context.addServlet(new ServletHolder(new SignUpServlet(userDao)),"/signup");
+        context.addServlet(new ServletHolder(new SignInServlet(userDao)),"/signin");
         
 
         Server server = new Server(8080);

@@ -1,4 +1,4 @@
-package utils;
+package dbUtils;
 
 import models.User;
 import org.hibernate.SessionFactory;
