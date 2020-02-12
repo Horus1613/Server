@@ -17,11 +17,26 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String login = req.getParameter("login");
+        String login = null;
+        String password = null;
+        try {
+            login = req.getParameter("login");
+            password = req.getParameter("password");
+            if (login == null || password == null) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().println("Bad login or password");
+                return;
+            }
+        } catch (NullPointerException ex) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().println("Bad login or password");
+            return;
+        }
+
         User user = userDao.findByLogin(login);
-        if(user!=null && user.getPassword().equals(req.getParameter("password"))){
+        if (!login.isEmpty() && !password.isEmpty() && user != null && user.getPassword().equals(password)) {
             resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().println("Authorized: "+ login);
+            resp.getWriter().println("Authorized: " + login);
         } else {
             resp.setStatus(401);
             resp.getWriter().println("Unauthorized");

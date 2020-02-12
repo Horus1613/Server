@@ -44,9 +44,8 @@ public class JdbcUserDAO implements UserDAO {
                 return null;
             } else {
                 resultSet.next();
-                User user = new User();
-                user.setLogin(resultSet.getString("login"));
-                user.setPassword(resultSet.getString("password"));
+                User user = new User(resultSet.getString("login"),
+                        resultSet.getString("password"));
                 return user;
             }
         });
