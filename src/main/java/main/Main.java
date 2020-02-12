@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import servlets.MirrorServlet;
 import servlets.signs.SignInServlet;
 import servlets.signs.SignUpServlet;
+import websockets.chat.WebSocketChatServlet;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -19,6 +20,7 @@ public class Main {
         context.addServlet(new ServletHolder(new MirrorServlet()),"/mirror");
         context.addServlet(new ServletHolder(new SignUpServlet(userDao)),"/signup");
         context.addServlet(new ServletHolder(new SignInServlet(userDao)),"/signin");
+        context.addServlet(new ServletHolder(new WebSocketChatServlet()),"/chat");
         
 
         Server server = new Server(8080);
