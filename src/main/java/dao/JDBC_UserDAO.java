@@ -1,18 +1,13 @@
 package dao;
 
-import dbUtils.Executor;
 import models.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class JDBC_UserDAO implements UserDAO {
 
 
     private final Connection connection;
-    private final Executor<User> executor;
 
     public JDBC_UserDAO() throws ClassNotFoundException, SQLException {
         String url = "jdbc:postgresql://localhost:5432/Module3";
@@ -21,7 +16,6 @@ public class JDBC_UserDAO implements UserDAO {
 
         Class.forName("org.postgresql.Driver");
         connection = DriverManager.getConnection(url, name, password);
-        executor = new Executor<>(connection);
     }
 
     @Override
@@ -45,10 +39,7 @@ public class JDBC_UserDAO implements UserDAO {
         try {
             preparedStatement = connection.prepareStatement(command);
             preparedStatement.setString(1,login);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return executor.execQuery(preparedStatement, resultSet -> {
+            ResultSet resultSet = preparedStatement.executeQuery();
             if (!resultSet.isBeforeFirst()) {
                 return null;
             } else {
@@ -57,6 +48,9 @@ public class JDBC_UserDAO implements UserDAO {
                         resultSet.getString("password"));
                 return user;
             }
-        });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
