@@ -1,9 +1,6 @@
 package dbUtils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Executor<T> {
     private final Connection connection;
@@ -12,22 +9,20 @@ public class Executor<T> {
         this.connection = connection;
     }
 
-    public void execUpdate(String update) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(update);
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-    }
-
-    public <T> T execQuery(String query,
+    public <T> T execQuery(PreparedStatement preparedStatement,
                            ResultHandler<T> handler) {
-        try (Statement statement = connection.createStatement()) {
-            statement.execute(query);
-            ResultSet result = statement.getResultSet();
+        try {
+            preparedStatement.execute();
+            ResultSet result = preparedStatement.getResultSet();
             return handler.handle(result);
         } catch (Exception ex){
             System.out.println(ex.getMessage());
+        } finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

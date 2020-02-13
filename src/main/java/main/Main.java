@@ -1,8 +1,7 @@
 package main;
 
-import dao.HibernateUserDAO;
 import dao.UserDAO;
-import dao.JdbcUserDAO;
+import dao.JDBC_UserDAO;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -14,7 +13,7 @@ import websockets.chat.WebSocketChatServlet;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        UserDAO userDao = new HibernateUserDAO();
+        UserDAO userDao = new JDBC_UserDAO();
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(new MirrorServlet()),"/mirror");
