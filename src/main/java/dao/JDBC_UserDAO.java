@@ -4,6 +4,7 @@ import models.User;
 
 import java.sql.*;
 
+@Deprecated
 public class JDBC_UserDAO implements UserDAO {
 
 
@@ -52,5 +53,10 @@ public class JDBC_UserDAO implements UserDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public void banControlByLogin(String login, boolean value) {
+
     }
 }

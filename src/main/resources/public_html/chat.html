@@ -1,0 +1,67 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>WebSocket Chat</title>
+    <script type="text/javascript">
+        let ws;
+        let username;
+
+        function init() {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            username = urlParams.get('user');
+            ws = new WebSocket("ws://localhost:8080/chat?user="+username);
+
+            ws.onopen = function (event) {
+            }
+
+            ws.onmessage = function (event) {
+                let $textarea = document.getElementById("messages");
+                let $users = document.getElementById("users");
+                if(event.data.startsWith("!u")){
+                    $users.value ='Online users:\n';
+                    $users.value += event.data.substring(2,event.data.length);
+                } else
+                if(event.data==="/clear"){
+                    $textarea.value='';
+                } else {
+                    $textarea.value = $textarea.value + event.data + "\n";
+                }
+            }
+            ws.onclose = function (event) {
+
+            }
+        }
+
+        function sendMessage() {
+            let $textarea = document.getElementById("messages");
+            let messageField = document.getElementById("message");
+            let message = messageField.value;
+            if(message==="/clear"){
+                $textarea.value='';
+                messageField.value='';
+            } else {
+                ws.send(message);
+                messageField.value = '';
+            }
+        }
+    </script>
+
+</head>
+<body onload="init();">
+<div id="body">
+    <div>
+        <div class="boxes" id="chatbox">
+            <textarea id="messages" rows="20" cols="150" readonly="readonly"></textarea>
+            <textarea id="users" rows="20" cols="40" readonly="readonly"></textarea>
+        </div>
+    </div>
+
+    <form name="message" action="">
+        <input name="usermsg" type="text" id="message" size="40"/>
+        <input type="button" name="submitmsg" value="Send..." onclick="sendMessage();"/>
+    </form>
+</div>
+</body>
+</html>
+

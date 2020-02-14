@@ -32,6 +32,7 @@ public class SignUpServlet extends HttpServlet {
             userDao.save(user);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("Signed up");
+
         } else {
             if (hasLogin && hasPassword) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);

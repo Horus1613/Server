@@ -6,12 +6,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table (name="users")
+@Table(name = "users")
 public class User {
     @Id
     private String login;
     @Column
     private String password;
+    @Column
+    private boolean banned;
+
 
     public User() {
     }
@@ -19,6 +22,11 @@ public class User {
     public User(String login, String password) {
         this.login = login;
         this.password = password;
+        this.banned = false;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 
     public String getLogin() {
@@ -35,5 +43,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setBanned(Boolean banned){
+        this.banned=banned;
+    }
+
+    public boolean getBanned(){
+        return banned;
     }
 }

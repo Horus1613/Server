@@ -34,9 +34,10 @@ public class SignInServlet extends HttpServlet {
         }
 
         User user = userDao.findByLogin(login);
-        if (!login.isEmpty() && !password.isEmpty() && user != null && user.getPassword().equals(password)) {
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().println("Authorized: " + login);
+        if (!login.isEmpty() && !password.isEmpty() && user != null && !user.getBanned()
+                && user.getPassword().equals(password)) {
+            resp.setStatus(HttpServletResponse.SC_FOUND);
+            resp.sendRedirect("/chat.html?user=".concat(login));
         } else {
             resp.setStatus(401);
             resp.getWriter().println("Unauthorized");
