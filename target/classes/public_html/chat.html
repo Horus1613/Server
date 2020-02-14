@@ -19,7 +19,7 @@
                 let $textarea = document.getElementById("messages");
                 let $users = document.getElementById("users");
                 if(event.data.startsWith("!u")){
-                    $users.value ='';
+                    $users.value ='Online users:\n';
                     $users.value += event.data.substring(2,event.data.length);
                 } else
                 if(event.data==="/clear"){
