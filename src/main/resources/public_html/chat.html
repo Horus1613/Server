@@ -10,7 +10,7 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             username = urlParams.get('user');
-            ws = new WebSocket("ws://localhost:8080/chat?user="+username);
+            ws = new WebSocket("ws://"+window.location.host+"/chat?user=" + username);
 
             ws.onopen = function (event) {
             }
@@ -18,12 +18,11 @@
             ws.onmessage = function (event) {
                 let $textarea = document.getElementById("messages");
                 let $users = document.getElementById("users");
-                if(event.data.startsWith("!u")){
-                    $users.value ='Online users:\n';
-                    $users.value += event.data.substring(2,event.data.length);
-                } else
-                if(event.data==="/clear"){
-                    $textarea.value='';
+                if (event.data.startsWith("!u")) {
+                    $users.value = 'Online users:\n';
+                    $users.value += event.data.substring(2, event.data.length);
+                } else if (event.data === "/clear") {
+                    $textarea.value = '';
                 } else {
                     $textarea.value = $textarea.value + event.data + "\n";
                 }
@@ -37,9 +36,9 @@
             let $textarea = document.getElementById("messages");
             let messageField = document.getElementById("message");
             let message = messageField.value;
-            if(message==="/clear"){
-                $textarea.value='';
-                messageField.value='';
+            if (message === "/clear") {
+                $textarea.value = '';
+                messageField.value = '';
             } else {
                 ws.send(message);
                 messageField.value = '';

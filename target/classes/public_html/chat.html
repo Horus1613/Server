@@ -10,7 +10,7 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             username = urlParams.get('user');
-            ws = new WebSocket("ws://localhost:8080/chat?user="+username);
+            ws = new WebSocket("ws://5ad48590.ngrok.io/chat?user="+username);
 
             ws.onopen = function (event) {
             }

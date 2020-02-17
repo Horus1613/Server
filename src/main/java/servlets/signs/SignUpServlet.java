@@ -27,19 +27,18 @@ public class SignUpServlet extends HttpServlet {
             resp.getWriter().println("Bad login or password");
             return;
         }
-        User user = new User(req.getParameter("login"), req.getParameter("password"));
+        User user = new User(req.getParameter("login"), req.getParameter("password"),false);
         if (hasLogin && hasPassword && userDao.findByLogin(req.getParameter("login")) == null) {
             userDao.save(user);
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().println("Signed up");
-
         } else {
             if (hasLogin && hasPassword) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 resp.getWriter().println("User is already signed up");
             } else {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().println("Bad login or password");
+                resp.getWriter().println("Bad login or password ");
             }
 
         }

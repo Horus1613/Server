@@ -19,10 +19,10 @@ public class User {
     public User() {
     }
 
-    public User(String login, String password) {
+    public User(String login, String password, boolean banned) {
         this.login = login;
         this.password = password;
-        this.banned = false;
+        this.banned = banned;
     }
 
     public void setBanned(boolean banned) {

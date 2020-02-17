@@ -4,7 +4,6 @@ import models.User;
 
 import java.sql.*;
 
-@Deprecated
 public class JDBC_UserDAO implements UserDAO {
 
 
@@ -21,11 +20,12 @@ public class JDBC_UserDAO implements UserDAO {
 
     @Override
     public void save(User user) {
-        String command = "INSERT INTO users VALUES (?,?)";
+        String command = "INSERT INTO users VALUES (?,?,?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(command);
             preparedStatement.setString(1,user.getLogin());
             preparedStatement.setString(2,user.getPassword());
+            preparedStatement.setBoolean(3,false);
             preparedStatement.execute();
             preparedStatement.close();
         } catch (SQLException e) {
@@ -46,7 +46,7 @@ public class JDBC_UserDAO implements UserDAO {
             } else {
                 resultSet.next();
                 User user = new User(resultSet.getString("login"),
-                        resultSet.getString("password"));
+                        resultSet.getString("password"),resultSet.getBoolean("banned"));
                 return user;
             }
         } catch (SQLException e) {
@@ -57,6 +57,16 @@ public class JDBC_UserDAO implements UserDAO {
 
     @Override
     public void banControlByLogin(String login, boolean value) {
+        String command = "UPDATE users SET banned=? WHERE login=?";
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(command);
+            preparedStatement.setBoolean(1,value);
+            preparedStatement.setString(2,login);
+            preparedStatement.execute();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 }

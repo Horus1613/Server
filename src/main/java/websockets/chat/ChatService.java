@@ -29,13 +29,13 @@ public class ChatService {
     }
 
     public void updateOnline(){
-        StringBuilder allSockets = new StringBuilder();
+        StringBuilder onlineUsers = new StringBuilder();
         for(ChatWebSocket socket : webSockets){
-            allSockets.append(socket.login).append("\n");
+            onlineUsers.append(socket.login).append("\n");
         }
         for(ChatWebSocket socket : webSockets){
             try{
-                socket.sendString("!u"+allSockets.toString());
+                socket.sendString("!u"+onlineUsers.toString());
             } catch (Exception e){
                 System.out.println(e.getMessage());
             }

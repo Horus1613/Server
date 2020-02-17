@@ -1,8 +1,10 @@
 package servlets.signs;
 
+import crypt.CipherHelper;
 import dao.UserDAO;
 import models.User;
 
+import javax.crypto.Cipher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +39,11 @@ public class SignInServlet extends HttpServlet {
         if (!login.isEmpty() && !password.isEmpty() && user != null && !user.getBanned()
                 && user.getPassword().equals(password)) {
             resp.setStatus(HttpServletResponse.SC_FOUND);
-            resp.sendRedirect("/chat.html?user=".concat(login));
+            try {
+                resp.sendRedirect("/chat.html?user=".concat(CipherHelper.cipher(login)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             resp.setStatus(401);
             resp.getWriter().println("Unauthorized");
