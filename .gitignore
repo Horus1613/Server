@@ -52,3 +52,4 @@ target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/create
 .idea/dataSources.xml
 .idea/dataSources.local.xml
 target/classes/hibernate.cfg.xml
+target/classes/public_html/chat.html
