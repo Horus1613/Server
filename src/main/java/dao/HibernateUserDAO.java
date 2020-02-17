@@ -8,12 +8,11 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class HibernateUserDAO implements UserDAO {
+public class HibernateUserDAO implements UserDAO, UserDAO_HQL {
 
-    private boolean HQL_mode;
 
-    public HibernateUserDAO(boolean HQL_mode) {
-        this.HQL_mode = HQL_mode;
+    public HibernateUserDAO() {
+
     }
 
     @Override
@@ -29,14 +28,15 @@ public class HibernateUserDAO implements UserDAO {
 
     @Override
     public User findByLogin(String login) {
-        if (!HQL_mode) {
-            return HibernateSessionFactory.getSessionFactory().openSession().get(User.class, login);
-        } else {
-            String command = "from User where login= :username";
-            Query<User> query = HibernateSessionFactory.getSessionFactory().openSession().createQuery(command);
-            query.setParameter("username", login);
-            return query.getSingleResult();
-        }
+        return HibernateSessionFactory.getSessionFactory().openSession().get(User.class, login);
+    }
+
+    @Override
+    public User findByLogin_HQL(String login) {
+        String command = "from User where login= :username";
+        Query<User> query = HibernateSessionFactory.getSessionFactory().openSession().createQuery(command);
+        query.setParameter("username", login);
+        return query.getSingleResult();
     }
 
     @Override

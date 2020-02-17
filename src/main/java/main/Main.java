@@ -18,7 +18,7 @@ import websockets.chat.WebSocketChatServlet;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        UserDAO userDao = new JDBC_UserDAO();
+        UserDAO userDao = new HibernateUserDAO();
 
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
