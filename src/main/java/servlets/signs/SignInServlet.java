@@ -4,7 +4,6 @@ import crypt.CipherHelper;
 import dao.UserDAO;
 import models.User;
 
-import javax.crypto.Cipher;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
