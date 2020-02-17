@@ -16,26 +16,19 @@
             }
 
             ws.onmessage = function (event) {
-                updateChat(event);
+                let $textarea = document.getElementById("messages");
+                let $users = document.getElementById("users");
+                if (event.data.startsWith("!u")) {
+                    $users.value = 'Online users:\n';
+                    $users.value += event.data.substring(2, event.data.length);
+                } else if (event.data === "/clear") {
+                    $textarea.value = '';
+                } else {
+                    $textarea.value = $textarea.value + event.data + "\n";
+                }
             }
             ws.onclose = function (event) {
-            }
-        }
 
-        function updateOnline(event) {
-            let $users = document.getElementById("users");
-            $users.value = 'Online users:\n';
-            $users.value += event.data.substring(2, event.data.length);
-        }
-
-        function updateChat(event) {
-            let $textarea = document.getElementById("messages");
-            if (event.data.startsWith("!u")) {
-                updateOnline(event);
-            } else if (event.data === "/clear") {
-                $textarea.value = '';
-            } else {
-                $textarea.value = $textarea.value + event.data + "\n";
             }
         }
 
@@ -51,12 +44,6 @@
                 messageField.value = '';
             }
         }
-
-        window.onkeydown = function(evt) {
-            let $button = document.getElementById('button');
-            if(evt.keyCode === 13) return false;
-        };
-
     </script>
 
 </head>
@@ -71,7 +58,7 @@
 
     <form name="message" action="">
         <input name="usermsg" type="text" id="message" size="40"/>
-        <input type="button" id="button" name="submitmsg" value="Send..." onclick="sendMessage();"/>
+        <input type="button" name="submitmsg" value="Send..." onclick="sendMessage();"/>
     </form>
 </div>
 </body>

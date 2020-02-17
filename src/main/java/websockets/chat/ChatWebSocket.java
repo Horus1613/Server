@@ -3,35 +3,42 @@ package websockets.chat;
 import dao.UserDAO;
 import models.User;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import websockets.utils.CommandPatterns;
+import org.eclipse.jetty.websocket.api.annotations.*;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("UnusedDeclaration")
 @WebSocket
 public class ChatWebSocket {
-    private static final String CLEAR_COMMAND = "/clear";
-
     private ChatService chatService;
     private Session session;
     private UserDAO userDAO;
+    private User user;
     private boolean adminMode;
     private boolean loginError = false;
-    private CommandPatterns commandPatterns;
-    private String login;
-    User user;
+    private ArrayList<Pattern> patterns = new ArrayList<>();
+
+    String login;
 
     public ChatWebSocket(ChatService chatService, UserDAO userDAO, String login) {
-        this.loginError = chatService.loginError(login);
-        if (loginError) return;
+        if (login == null) {
+            loginError = true;
+            return;
+        }
         this.chatService = chatService;
         this.userDAO = userDAO;
         this.user = this.userDAO.findByLogin(login);
         this.login = login;
-        this.adminMode = user.getLogin().equals("root");
-        this.commandPatterns = new CommandPatterns();
+        adminMode = user.getLogin().equals("root");
+
+        patterns.add(Pattern.compile("^/ban ([\\S]+).*"));
+        patterns.add(Pattern.compile("^/unban ([\\S]+).*"));
+        patterns.add(Pattern.compile("/clear -global"));
     }
 
     @OnWebSocketConnect
@@ -42,34 +49,32 @@ public class ChatWebSocket {
         }
         chatService.add(this);
         this.session = session;
-        chatService.printHistory(this.session);
-        chatService.messageConnectivity(user.getLogin(), true);
+        chatService.history.forEach(this::sendString);
+        chatService.sendMessage(currentTime() + user.getLogin() + " joined!", false);
         chatService.updateOnline();
     }
 
     @OnWebSocketMessage
     public void onMessage(String data) {
-        int patternIndex = commandPatterns.patternValidate(data);
+        int patternIndex = patternValidate(data);
         if (adminMode && patternIndex >= 0) {
-            String commandUsername;
+            Matcher matcher = patterns.get(patternIndex).matcher(data);
             switch (patternIndex) {
                 case 0:
-                    commandUsername = commandPatterns.userName(data, patternIndex);
-                    userDAO.banControlByLogin(commandUsername, true);
-                    chatService.messageBanned(commandUsername, true);
+                    userDAO.banControlByLogin(matcher.group(1), true);
+                    chatService.sendMessage(currentTime() + "User " + matcher.group(1) + " was banned!", false);
                     break;
                 case 1:
-                    commandUsername = commandPatterns.userName(data, patternIndex);
-                    userDAO.banControlByLogin(commandUsername, false);
-                    chatService.messageBanned(commandUsername, false);
+                    userDAO.banControlByLogin(matcher.group(1), false);
+                    chatService.sendMessage(currentTime() + "User " + matcher.group(1) + " was unbanned!", false);
                     break;
                 case 2:
-                    chatService.sendMessage(CLEAR_COMMAND, true);
+                    chatService.sendMessage("/clear", true);
                     chatService.history.clear();
                     break;
             }
         } else {
-            chatService.regularMessage(user.getLogin(), data);
+            chatService.sendMessage(currentTime() + user.getLogin() + ": " + data, false);
         }
     }
 
@@ -77,7 +82,7 @@ public class ChatWebSocket {
     public void onClose(int statusCode, String reason) {
         if (loginError) return;
         chatService.remove(this);
-        chatService.messageConnectivity(user.getLogin(), false);
+        chatService.sendMessage(currentTime() + user.getLogin() + " left!", false);
         chatService.updateOnline();
     }
 
@@ -89,4 +94,17 @@ public class ChatWebSocket {
         }
     }
 
+    private String currentTime() {
+        String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+        return time + "\t\t";
+    }
+
+    private int patternValidate(String data) {
+        for (int i = 0; i < patterns.size(); i++) {
+            if (patterns.get(i).matcher(data).matches()) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
