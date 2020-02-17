@@ -8,11 +8,13 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websockets.utils.CommandPatterns;
+import websockets.utils.Commands;
 
 @SuppressWarnings("UnusedDeclaration")
 @WebSocket
 public class ChatWebSocket {
-    private static final String CLEAR_COMMAND = "/clear";
+    private static final String LOCAL_CLEAR_COMMAND = "/clear";
+    private static final String ADMIN_LOGIN = "root";
 
     private ChatService chatService;
     private Session session;
@@ -30,7 +32,7 @@ public class ChatWebSocket {
         this.userDAO = userDAO;
         this.user = this.userDAO.findByLogin(login);
         this.login = login;
-        this.adminMode = user.getLogin().equals("root");
+        this.adminMode = user.getLogin().equals(ADMIN_LOGIN);
         this.commandPatterns = new CommandPatterns();
     }
 
@@ -49,22 +51,22 @@ public class ChatWebSocket {
 
     @OnWebSocketMessage
     public void onMessage(String data) {
-        int patternIndex = commandPatterns.patternValidate(data);
-        if (adminMode && patternIndex >= 0) {
+        Commands command = commandPatterns.patternValidate(data);
+        if (adminMode && !command.equals(Commands.NOT_FOUND)) {
             String commandUsername;
-            switch (patternIndex) {
-                case 0:
-                    commandUsername = commandPatterns.userName(data, patternIndex);
+            switch (command) {
+                case BAN:
+                    commandUsername = commandPatterns.userName(data, Commands.BAN);
                     userDAO.banControlByLogin(commandUsername, true);
                     chatService.messageBanned(commandUsername, true);
                     break;
-                case 1:
-                    commandUsername = commandPatterns.userName(data, patternIndex);
+                case UNBAN:
+                    commandUsername = commandPatterns.userName(data, Commands.UNBAN);
                     userDAO.banControlByLogin(commandUsername, false);
                     chatService.messageBanned(commandUsername, false);
                     break;
-                case 2:
-                    chatService.sendMessage(CLEAR_COMMAND, true);
+                case CLEAR_GLOBAL:
+                    chatService.sendMessage(LOCAL_CLEAR_COMMAND, true);
                     chatService.history.clear();
                     break;
             }

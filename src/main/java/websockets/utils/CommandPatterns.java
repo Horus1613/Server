@@ -15,17 +15,17 @@ public class CommandPatterns {
     }
 
 
-    public int patternValidate(String data) {
+    public Commands patternValidate(String data) {
         for (int i = 0; i < patterns.size(); i++) {
             if (patterns.get(i).matcher(data).matches()) {
-                return i;
+                return Commands.getByIndex(i);
             }
         }
-        return -1;
+        return Commands.NOT_FOUND;
     }
 
-    public String userName(String data, int patternIndex){
-        Matcher matcher = patterns.get(patternIndex).matcher(data);
+    public String userName(String data, Commands command){
+        Matcher matcher = patterns.get(command.ordinal()).matcher(data);
         matcher.find();
         return matcher.group(1);
     }
