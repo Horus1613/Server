@@ -2,6 +2,7 @@ package websockets.chat;
 
 import models.User;
 import org.eclipse.jetty.websocket.api.Session;
+import servlets.info.ServerInfo;
 import websockets.utils.History;
 
 import java.io.IOException;
@@ -87,7 +88,7 @@ public class ChatService {
 
 
     public boolean loginError(String login) {
-        return login==null;
+        return login == null || ServerInfo.getInstance().getUsers() >= ServerInfo.getInstance().getUsersLimit();
     }
 
     public void add(ChatWebSocket webSocket) {

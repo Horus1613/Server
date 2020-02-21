@@ -7,6 +7,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import servlets.info.ServerInfo;
 import websockets.utils.CommandPatterns;
 import websockets.utils.Commands;
 
@@ -43,6 +44,7 @@ public class ChatWebSocket {
             return;
         }
         chatService.add(this);
+        ServerInfo.getInstance().addUser();
         this.session = session;
         chatService.printHistory(this.session);
         chatService.messageConnectivity(user.getLogin(), true);
@@ -79,6 +81,7 @@ public class ChatWebSocket {
     public void onClose(int statusCode, String reason) {
         if (loginError) return;
         chatService.remove(this);
+        ServerInfo.getInstance().removeUser();
         chatService.messageConnectivity(user.getLogin(), false);
         chatService.updateOnline();
     }
