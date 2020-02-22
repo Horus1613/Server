@@ -10,26 +10,32 @@
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             username = urlParams.get('user');
-            ws = new WebSocket("ws://5ad48590.ngrok.io/chat?user="+username);
+            ws = new WebSocket("ws://"+window.location.host+"/chat?user=" + username);
 
             ws.onopen = function (event) {
             }
 
             ws.onmessage = function (event) {
-                let $textarea = document.getElementById("messages");
-                let $users = document.getElementById("users");
-                if(event.data.startsWith("!u")){
-                    $users.value ='Online users:\n';
-                    $users.value += event.data.substring(2,event.data.length);
-                } else
-                if(event.data==="/clear"){
-                    $textarea.value='';
-                } else {
-                    $textarea.value = $textarea.value + event.data + "\n";
-                }
+                updateChat(event);
             }
             ws.onclose = function (event) {
+            }
+        }
 
+        function updateOnline(event) {
+            let $users = document.getElementById("users");
+            $users.value = 'Online users:\n';
+            $users.value += event.data.substring(2, event.data.length);
+        }
+
+        function updateChat(event) {
+            let $textarea = document.getElementById("messages");
+            if (event.data.startsWith("!u")) {
+                updateOnline(event);
+            } else if (event.data === "/clear") {
+                $textarea.value = '';
+            } else {
+                $textarea.value = $textarea.value + event.data + "\n";
             }
         }
 
@@ -37,14 +43,20 @@
             let $textarea = document.getElementById("messages");
             let messageField = document.getElementById("message");
             let message = messageField.value;
-            if(message==="/clear"){
-                $textarea.value='';
-                messageField.value='';
+            if (message === "/clear") {
+                $textarea.value = '';
+                messageField.value = '';
             } else {
                 ws.send(message);
                 messageField.value = '';
             }
         }
+
+        window.onkeydown = function(evt) {
+            let $button = document.getElementById('button');
+            if(evt.keyCode === 13) return false;
+        };
+
     </script>
 
 </head>
@@ -59,7 +71,7 @@
 
     <form name="message" action="">
         <input name="usermsg" type="text" id="message" size="40"/>
-        <input type="button" name="submitmsg" value="Send..." onclick="sendMessage();"/>
+        <input type="button" id="button" name="submitmsg" value="Send..." onclick="sendMessage();"/>
     </form>
 </div>
 </body>
