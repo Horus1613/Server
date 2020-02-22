@@ -55,3 +55,10 @@ target/classes/hibernate.cfg.xml
 target/classes/public_html/chat.html
 target/classes/public_html/chat.html
 
+target/surefire-reports/servlets.MirrorServletTest.txt
+target/surefire-reports/servlets.signs.SignInServletTest.txt
+target/surefire-reports/servlets.signs.SignUpServletTest.txt
+target/surefire-reports/TEST-servlets.MirrorServletTest.xml
+target/surefire-reports/TEST-servlets.signs.SignInServletTest.xml
+target/surefire-reports/TEST-servlets.signs.SignUpServletTest.xml
+target/test-classes/META-INF/Server.kotlin_module
