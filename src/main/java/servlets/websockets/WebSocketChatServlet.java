@@ -1,9 +1,11 @@
-package websockets.chat;
+package servlets.websockets;
 
 import crypt.CipherHelper;
 import dao.UserDAO;
 import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+import services.chat.ChatService;
+import models.ChatWebSocket;
 
 import javax.servlet.annotation.WebServlet;
 

@@ -1,4 +1,4 @@
-package dbUtils;
+package dao.dbUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

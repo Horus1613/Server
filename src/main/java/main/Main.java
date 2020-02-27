@@ -1,6 +1,5 @@
 package main;
 
-import dao.HibernateUserDAO;
 import dao.JDBC_UserDAO;
 import dao.UserDAO;
 import org.eclipse.jetty.server.Handler;
@@ -15,7 +14,7 @@ import servlets.info.ServerInfo;
 import servlets.info.ServerInfoServlet;
 import servlets.signs.SignInServlet;
 import servlets.signs.SignUpServlet;
-import websockets.chat.WebSocketChatServlet;
+import servlets.websockets.WebSocketChatServlet;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;

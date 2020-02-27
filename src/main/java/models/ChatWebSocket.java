@@ -1,20 +1,19 @@
-package websockets.chat;
+package models;
 
 import dao.UserDAO;
-import models.User;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import servlets.info.ServerInfo;
-import websockets.utils.CommandPatterns;
-import websockets.utils.Commands;
+import services.chat.utils.CommandPatterns;
+import services.chat.utils.Commands;
+import services.chat.ChatService;
 
 @SuppressWarnings("UnusedDeclaration")
 @WebSocket
 public class ChatWebSocket {
-    private static final String LOCAL_CLEAR_COMMAND = "/clear";
     private static final String ADMIN_LOGIN = "root";
 
     private ChatService chatService;
@@ -24,17 +23,25 @@ public class ChatWebSocket {
     private boolean loginError = false;
     private CommandPatterns commandPatterns;
     private String login;
-    User user;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
 
     public ChatWebSocket(ChatService chatService, UserDAO userDAO, String login) {
-        this.loginError = chatService.loginError(login);
-        if (loginError) return;
-        this.chatService = chatService;
-        this.userDAO = userDAO;
-        this.user = this.userDAO.findByLogin(login);
-        this.login = login;
-        this.adminMode = user.getLogin().equals(ADMIN_LOGIN);
-        this.commandPatterns = new CommandPatterns();
+        try {
+            this.loginError = chatService.loginError(login);
+            this.chatService = chatService;
+            this.userDAO = userDAO;
+            this.user = this.userDAO.findByLogin(login);
+            this.login = login;
+            this.adminMode = user.getLogin().equals(ADMIN_LOGIN);
+            this.commandPatterns = new CommandPatterns();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
     }
 
     @OnWebSocketConnect
@@ -53,25 +60,8 @@ public class ChatWebSocket {
 
     @OnWebSocketMessage
     public void onMessage(String data) {
-        Commands command = commandPatterns.patternValidate(data);
-        if (adminMode && !command.equals(Commands.NOT_FOUND)) {
-            String commandUsername;
-            switch (command) {
-                case BAN:
-                    commandUsername = commandPatterns.userName(data, Commands.BAN);
-                    userDAO.banControlByLogin(commandUsername, true);
-                    chatService.messageBanned(commandUsername, true);
-                    break;
-                case UNBAN:
-                    commandUsername = commandPatterns.userName(data, Commands.UNBAN);
-                    userDAO.banControlByLogin(commandUsername, false);
-                    chatService.messageBanned(commandUsername, false);
-                    break;
-                case CLEAR_GLOBAL:
-                    chatService.sendMessage(LOCAL_CLEAR_COMMAND, true);
-                    chatService.history.clear();
-                    break;
-            }
+        if (adminMode && commandPatterns.validatePattern(data)) {
+            commandPatterns.sendCommand(userDAO,chatService,data);
         } else {
             chatService.regularMessage(user.getLogin(), data);
         }

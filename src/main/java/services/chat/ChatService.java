@@ -1,11 +1,14 @@
-package websockets.chat;
+package services.chat;
 
+import models.ChatWebSocket;
 import models.User;
 import org.eclipse.jetty.websocket.api.Session;
+import services.chat.utils.Notify;
 import servlets.info.ServerInfo;
-import websockets.utils.History;
+import services.chat.utils.History;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,20 +16,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatService {
-    Set<ChatWebSocket> webSockets;
-    Set<User> usersOnline;
-    History history = new History();
+    private Set<ChatWebSocket> webSockets;
+    private History history = new History();
 
     public ChatService() {
         this.webSockets = Collections.newSetFromMap(new ConcurrentHashMap<>());
-        this.usersOnline = Collections.newSetFromMap(new ConcurrentHashMap<>());
     }
 
-    public void sendMessage(String data, boolean devMode) {
-        if (!devMode) {
-            history.add(data);
-        }
+    public void clearHistory() {
+        history.clear();
+    }
 
+    public void sendMessage(String data) {
+        history.add(data);
         for (ChatWebSocket socket : webSockets) {
             try {
                 socket.sendString(data);
@@ -39,11 +41,7 @@ public class ChatService {
 
     public void updateOnline() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (ChatWebSocket socket : webSockets) {
-            usersOnline.clear();
-            usersOnline.add(socket.user);
-        }
-        usersOnline.forEach(i -> stringBuilder.append(i.getLogin()).append('\n'));
+        webSockets.forEach(i -> stringBuilder.append(i.getUser().getLogin()).append('\n'));
         for (ChatWebSocket socket : webSockets) {
             try {
                 socket.sendString("!u" + stringBuilder.toString());
@@ -54,23 +52,24 @@ public class ChatService {
     }
 
     public void messageConnectivity(String login, boolean isJoin) {
+
         if (isJoin) {
-            sendMessage(currentTime() + login + " joined!", false);
+            sendMessage(Notify.JOIN.execute(currentTime(), login));
         } else {
-            sendMessage(currentTime() + login + " left!", false);
+            sendMessage(Notify.LEFT.execute(currentTime(), login));
         }
     }
 
     public void messageBanned(String login, boolean isBanned) {
         if (isBanned) {
-            sendMessage(currentTime() + "User " + login + " was banned!", false);
+            sendMessage(Notify.BAN.execute(currentTime(), login));
         } else {
-            sendMessage(currentTime() + "User " + login + " was unbanned!", false);
+            sendMessage(Notify.UNBAN.execute(currentTime(), login));
         }
     }
 
     public void regularMessage(String login, String data) {
-        sendMessage(currentTime() + login + ": " + data, false);
+        sendMessage(Notify.REGULAR.execute(currentTime(), login, data));
     }
 
     private String currentTime() {

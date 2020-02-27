@@ -2,6 +2,8 @@ package servlets.signs;
 
 import dao.UserDAO;
 import models.User;
+import services.sign.ResponseModel;
+import services.sign.SignService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,31 +19,8 @@ public class SignUpServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        boolean hasLogin = false;
-        boolean hasPassword = false;
-        try {
-            hasLogin = !req.getParameter("login").isEmpty();
-            hasPassword = !req.getParameter("password").isEmpty();
-        } catch (NullPointerException ex) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().println("Bad login or password");
-            return;
-        }
-        User user = new User(req.getParameter("login"), req.getParameter("password"),false);
-        if (hasLogin && hasPassword && userDao.findByLogin(req.getParameter("login")) == null) {
-            userDao.save(user);
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().println("Signed up");
-        } else {
-            if (hasLogin && hasPassword) {
-                resp.setStatus(HttpServletResponse.SC_CONFLICT);
-                resp.getWriter().println("User is already signed up");
-            } else {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().println("Bad login or password ");
-            }
-
-        }
-
+        ResponseModel responseModel = SignService.signUp(userDao,req);
+        resp.setStatus(responseModel.getStatus());
+        resp.getWriter().println(responseModel.getResponseData());
     }
 }

@@ -1,4 +1,4 @@
-package dbUtils;
+package dao.dbUtils;
 
 import models.User;
 import org.hibernate.SessionFactory;

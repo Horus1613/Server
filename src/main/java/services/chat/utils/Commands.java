@@ -1,4 +1,4 @@
-package websockets.utils;
+package services.chat.utils;
 
 public enum Commands {
     BAN,

@@ -3,10 +3,8 @@ package dao;
 import models.User;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import dbUtils.HibernateSessionFactory;
+import dao.dbUtils.HibernateSessionFactory;
 import org.hibernate.query.Query;
-
-import java.util.List;
 
 public class HibernateUserDAO implements UserDAO, UserDAO_HQL {
 
