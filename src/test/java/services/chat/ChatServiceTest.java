@@ -1,12 +1,9 @@
 package services.chat;
 
-import models.ChatWebSocket;
 import models.User;
 import org.eclipse.jetty.websocket.api.RemoteEndpoint;
 import org.eclipse.jetty.websocket.api.Session;
-import org.junit.Assert;
 import org.junit.Test;
-import services.chat.ChatService;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -41,11 +38,11 @@ public class ChatServiceTest {
         chatService.add(chatWebSocket);
         String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        chatService.messageConnectivity("root",true);
-        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s joined!",time,"root"));
+        chatService.messageConnectivity("root", true);
+        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s joined!", time, "root"));
 
-        chatService.messageConnectivity("root",false);
-        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s left!",time,"root"));
+        chatService.messageConnectivity("root", false);
+        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s left!", time, "root"));
     }
 
     @Test
@@ -53,20 +50,19 @@ public class ChatServiceTest {
         chatService.add(chatWebSocket);
         String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
 
-        chatService.messageBanned("root",true);
+        chatService.messageBanned("root", true);
+        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s banned!", time, "root"));
 
-        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s banned!",time,"root"));
-
-        chatService.messageBanned("root",false);
-        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s unbanned!",time,"root"));
+        chatService.messageBanned("root", false);
+        verify(chatWebSocket).sendString(String.format("%s\t\tUser %s unbanned!", time, "root"));
     }
 
     @Test
     public void regularMessage() {
         chatService.add(chatWebSocket);
         String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
-        chatService.regularMessage("root","message");
-        verify(chatWebSocket).sendString(String.format("%s\t\t%s:%s",time,"root","message"));
+        chatService.regularMessage("root", "message");
+        verify(chatWebSocket).sendString(String.format("%s\t\t%s:%s", time, "root", "message"));
     }
 
     @Test

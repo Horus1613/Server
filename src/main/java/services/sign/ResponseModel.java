@@ -1,7 +1,5 @@
 package services.sign;
 
-import javax.servlet.http.HttpServletResponse;
-
 public class ResponseModel {
     private int status;
     private String responseData;

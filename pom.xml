@@ -6,7 +6,7 @@
 
     <groupId>ru.horus</groupId>
     <artifactId>server</artifactId>
-    <version>1.5</version>
+    <version>1.6</version>
     <build>
         <plugins>
             <plugin>

@@ -12,7 +12,7 @@ public class SignService {
     public static ResponseModel signIn(UserDAO userDAO, HttpServletRequest req){
         ResponseModel resp = new ResponseModel();
         String login;
-        String password = null;
+        String password;
         try {
             login = req.getParameter("login");
             password = req.getParameter("password");

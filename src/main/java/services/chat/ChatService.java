@@ -1,14 +1,11 @@
 package services.chat;
 
-import models.ChatWebSocket;
-import models.User;
 import org.eclipse.jetty.websocket.api.Session;
 import services.chat.utils.Notify;
 import servlets.info.ServerInfo;
 import services.chat.utils.History;
 
 import java.io.IOException;
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -52,7 +49,6 @@ public class ChatService {
     }
 
     public void messageConnectivity(String login, boolean isJoin) {
-
         if (isJoin) {
             sendMessage(Notify.JOIN.execute(currentTime(), login));
         } else {
@@ -87,7 +83,8 @@ public class ChatService {
 
 
     public boolean loginError(String login) {
-        return login == null || ServerInfo.getInstance().getUsers() >= ServerInfo.getInstance().getUsersLimit();
+        return login == null ||
+                ServerInfo.getInstance().getUsers() >= ServerInfo.getInstance().getUsersLimit();
     }
 
     public void add(ChatWebSocket webSocket) {

@@ -7,23 +7,19 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SignServiceTest {
 
     HttpServletRequest request = mock(HttpServletRequest.class);
-    HttpServletResponse response = mock(HttpServletResponse.class);
     JDBC_UserDAO jdbc_userDAO = mock(JDBC_UserDAO.class);
 
     @Test
-    public void signIn_shouldReturnRedirectWhenGoodLogin() throws IOException {
+    public void signInShouldReturnRedirectWhenGoodLogin() throws IOException {
         when(request.getParameter("login")).thenReturn("root");
         when(request.getParameter("password")).thenReturn("toor");
         when(jdbc_userDAO.findByLogin("root")).thenReturn(new User("root", "toor", false));
@@ -32,7 +28,7 @@ public class SignServiceTest {
     }
 
     @Test
-    public void signIn_shouldSetStatus401WhenBadLoginOrPassword() {
+    public void signInShouldSetStatus401WhenBadLoginOrPassword() {
         when(request.getParameter("login")).thenReturn("root");
         when(request.getParameter("password")).thenReturn("badpassword");
         when(jdbc_userDAO.findByLogin("root")).thenReturn(new User("root", "toor", false));
@@ -48,7 +44,7 @@ public class SignServiceTest {
     }
 
     @Test
-    public void signIn_shouldSetStatus400WhenNullLoginOrPassword() {
+    public void signInShouldSetStatus400WhenNullLoginOrPassword() {
         when(request.getParameter("login")).thenReturn("root");
         when(request.getParameter("password")).thenReturn(null);
         when(jdbc_userDAO.findByLogin("root")).thenReturn(new User("root", "toor", false));
@@ -64,7 +60,7 @@ public class SignServiceTest {
     }
 
     @Test
-    public void signUp_shouldSetStatus409IfUserIsAlreadyExist() {
+    public void signUpShouldSetStatus409IfUserIsAlreadyExist() {
         when(request.getParameter("login")).thenReturn("root");
         when(request.getParameter("password")).thenReturn("toor");
         when(jdbc_userDAO.findByLogin("root")).thenReturn(new User("root", "toor", false));
@@ -74,7 +70,7 @@ public class SignServiceTest {
     }
 
     @Test
-    public void signUp_shouldSetStatus200WhenNewUser() {
+    public void signUpShouldSetStatus200WhenNewUser() {
         when(request.getParameter("login")).thenReturn("new");
         when(request.getParameter("password")).thenReturn("user");
         when(jdbc_userDAO.findByLogin("root")).thenReturn(null);
@@ -84,7 +80,7 @@ public class SignServiceTest {
     }
 
     @Test
-    public void signUp_shouldSetStatus400WhenEmptyLoginOrPassword() {
+    public void signUpShouldSetStatus400WhenEmptyLoginOrPassword() {
         when(request.getParameter("login")).thenReturn("");
         when(request.getParameter("password")).thenReturn("pass");
         when(jdbc_userDAO.findByLogin("root")).thenReturn(null);

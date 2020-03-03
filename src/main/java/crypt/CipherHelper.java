@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 public class CipherHelper {
     private static final String ALGORITHM = "DES";
-    private static String secretKey = new SimpleDateFormat("DdDd").format(Calendar.getInstance().getTime());
+    private static String secretKey = new SimpleDateFormat("DdDdD").format(Calendar.getInstance().getTime());
 
     public static String cipher(String data){
         SecretKey key = new SecretKeySpec(secretKey.getBytes(),ALGORITHM);
@@ -18,8 +18,8 @@ public class CipherHelper {
             cipher.init(Cipher.ENCRYPT_MODE,key);
             return toHex(cipher.doFinal(data.getBytes()));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-                InvalidKeyException | IllegalBlockSizeException | BadPaddingException ignored) {
-
+                InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+            System.out.println(ex.getMessage());
         }
         return null;
     }
@@ -31,8 +31,8 @@ public class CipherHelper {
             cipher.init(Cipher.DECRYPT_MODE,key);
             return new String(cipher.doFinal(toByte(data)));
         } catch (NoSuchAlgorithmException | NoSuchPaddingException |
-                InvalidKeyException | IllegalBlockSizeException | BadPaddingException ignored) {
-
+                InvalidKeyException | IllegalBlockSizeException | BadPaddingException ex) {
+            System.out.println(ex.getMessage());
         }
         return null;
     }

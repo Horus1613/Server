@@ -28,7 +28,7 @@ public class CommandPatterns {
         return Commands.NOT_FOUND;
     }
 
-    public boolean validatePattern(String data){
+    public boolean validatePattern(String data) {
         for (int i = 0; i < patterns.size(); i++) {
             if (patterns.get(i).matcher(data).matches()) {
                 return true;
@@ -37,13 +37,14 @@ public class CommandPatterns {
         return false;
     }
 
-    private String userName(String data, Commands command){
+    private String userName(String data, Commands command) {
         Matcher matcher = patterns.get(command.ordinal()).matcher(data);
         matcher.find();
         return matcher.group(1);
     }
 
-    public void sendCommand(UserDAO userDAO, ChatService chatService, String data){
+    //TODO Вынести в отдельный сервис
+    public void sendCommand(UserDAO userDAO, ChatService chatService, String data) {
         Commands command = this.findPattern(data);
         String commandUsername;
         switch (command) {

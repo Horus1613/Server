@@ -1,5 +1,6 @@
 package servlets.info;
 
+//TODO Избавиться от этой залупы
 public class ServerInfo implements ServerInfoMBean {
     private static ServerInfo serverInfo;
 

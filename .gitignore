@@ -62,3 +62,7 @@ target/surefire-reports/TEST-servlets.MirrorServletTest.xml
 target/surefire-reports/TEST-servlets.signs.SignInServletTest.xml
 target/surefire-reports/TEST-servlets.signs.SignUpServletTest.xml
 target/test-classes/META-INF/Server.kotlin_module
+target/surefire-reports/TEST-services.sign.SignServiceTest.xml
+target/surefire-reports/TEST-services.chat.ChatServiceTest.xml
+target/surefire-reports/services.sign.SignServiceTest.txt
+target/surefire-reports/services.chat.ChatServiceTest.txt
